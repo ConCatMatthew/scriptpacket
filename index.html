@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="ico.png">
+    <title>ScriptPacket</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #scriptInput {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        #executeButton {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+
+        #successMessage {
+            color: #00ff00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ScriptPacket</h1>
+    <input type="text" id="scriptInput" placeholder="Enter your script...">
+    <button id="executeButton" onclick="sendScript()">Execute</button>
+    <div id="output"></div>
+    <div id="successMessage"></div>
+
+    <script>
+        function sendScript() {
+            var scriptInput = document.getElementById('scriptInput').value;
+
+            if (scriptInput.trim() !== '') {
+                var currentTime = new Date();
+                var formattedTime = currentTime.toISOString();
+                var scriptNumber = getScriptNumber();
+
+                var message = `${formattedTime}\nScript #${scriptNumber}\n\n${scriptInput}`;
+
+                // Fetch request to send the message to the Discord webhook
+                fetch('https://discord.com/api/webhooks/1203002721012285500/SGWoKjOIwIegun2MCq9Tog61cXZpjUrGe-13kffJVik_50YjfsK8nGcUYyEzvbKQzH7Q', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: message,
+                    }),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('output').innerText = '';
+                            document.getElementById('successMessage').innerText = 'Script sent successfully!';
+                        } else {
+                            document.getElementById('successMessage').innerText = '';
+                            document.getElementById('output').innerText = 'Error sending script. Please try again later.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('successMessage').innerText = '';
+                        document.getElementById('output').innerText = 'Error sending script. Please try again later.';
+                    });
+            } else {
+                alert('Please enter a script before executing.');
+            }
+        }
+
+        function getScriptNumber() {
+            var scriptNumber = localStorage.getItem('scriptNumber') || 0;
+            scriptNumber++;
+            localStorage.setItem('scriptNumber', scriptNumber);
+
+            return scriptNumber;
+        }
+    </script>
+</body>
+
+</html>
